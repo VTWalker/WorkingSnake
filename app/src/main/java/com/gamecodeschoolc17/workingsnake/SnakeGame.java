@@ -3,6 +3,8 @@ package com.gamecodeschoolc17.workingsnake;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -15,6 +17,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import java.io.IOException;
+import java.util.Random;
 
 class SnakeGame extends SurfaceView implements Runnable{
 
@@ -35,6 +38,9 @@ class SnakeGame extends SurfaceView implements Runnable{
     private final int NUM_BLOCKS_WIDE = 40;
     private int mNumBlocksHigh;
 
+    // Declare variable blockSize in main class
+    private int blockSize;
+
     // How many points does the player have
     private int mScore;
 
@@ -43,10 +49,23 @@ class SnakeGame extends SurfaceView implements Runnable{
     private SurfaceHolder mSurfaceHolder;
     private Paint mPaint;
 
+    // Random variable for apple spawns
+    Random random = new Random();
+
     // A snake ssss
     private Snake mSnake;
-    // And an apple
-    private Apple mApple;
+
+    // Two Apple types
+    private NewApple mGoodApple;
+    private NewApple mBadApple;
+
+    // Apple Builders
+    private GoodAppleBuilder mGoodAppleBuilder;
+    private BadAppleBuilder mBadAppleBuilder;
+
+    // Good/Bad Apple bitmaps
+    private Bitmap mBitmapGoodApple;
+    private Bitmap mBitmapBadApple;
 
 
     // This is the constructor method that gets called
@@ -55,7 +74,7 @@ class SnakeGame extends SurfaceView implements Runnable{
         super(context);
 
         // Work out how many pixels each block is
-        int blockSize = size.x / NUM_BLOCKS_WIDE;
+        blockSize = size.x / NUM_BLOCKS_WIDE;
         // How many blocks of the same size will fit into the height
         mNumBlocksHigh = size.y / blockSize;
 
@@ -93,10 +112,23 @@ class SnakeGame extends SurfaceView implements Runnable{
         mPaint = new Paint();
 
         // Call the constructors of our two game objects
-        mApple = new Apple(context,
-                new Point(NUM_BLOCKS_WIDE,
-                        mNumBlocksHigh),
-                blockSize);
+
+        // initialize GoodApple bitmap
+        this.mBitmapGoodApple = BitmapFactory.decodeResource(context.getResources(), R.drawable.apple);
+        this.mBitmapGoodApple = Bitmap.createScaledBitmap(mBitmapGoodApple, blockSize, blockSize, false);
+
+        // initialize BadApple bitmap
+        this.mBitmapBadApple = BitmapFactory.decodeResource(context.getResources(), R.drawable.badapple);
+        this.mBitmapBadApple = Bitmap.createScaledBitmap(mBitmapBadApple, blockSize, blockSize, false);
+
+//       2/3 chance of a good apple, 1/3 for bad
+//       if (random.nextInt(2) + 1 > 1) {
+        this.mGoodAppleBuilder = new GoodAppleBuilder(mBitmapGoodApple, new Point (0, 40) , new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), blockSize);
+        this.mGoodApple = this.mGoodAppleBuilder.returnApple();
+//        } else {
+        this.mBadAppleBuilder = new BadAppleBuilder(mBitmapBadApple, new Point (10, 30) , new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), blockSize);
+        this.mBadApple = this.mBadAppleBuilder.returnApple();
+//        }
 
         mSnake = new Snake(context,
                 new Point(NUM_BLOCKS_WIDE,
@@ -105,7 +137,6 @@ class SnakeGame extends SurfaceView implements Runnable{
 
     }
 
-
     // Called to start a new game
     public void newGame() {
 
@@ -113,7 +144,17 @@ class SnakeGame extends SurfaceView implements Runnable{
         mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
 
         // Get the apple ready for dinner
-        mApple.spawn();
+        if (random.nextInt(2) + 1 > 1) {
+            this.mGoodApple.location.x = random.nextInt(this.mGoodApple.mSpawnRange.x - 1) + 1;
+            this.mGoodApple.location.y = random.nextInt(this.mGoodApple.mSpawnRange.y - 1) + 1;
+            this.mBadApple.location.x = -10;
+            this.mBadApple.location.y = 0;
+        } else {
+            this.mBadApple.location.x = random.nextInt(this.mBadApple.mSpawnRange.x - 1) + 1;
+            this.mBadApple.location.y = random.nextInt(this.mBadApple.mSpawnRange.y - 1) + 1;
+            this.mGoodApple.location.x = -10;
+            this.mGoodApple.location.y = 0;
+        }
 
         // Reset the mScore
         mScore = 0;
@@ -133,7 +174,6 @@ class SnakeGame extends SurfaceView implements Runnable{
                     update();
                 }
             }
-
             draw();
         }
     }
@@ -171,12 +211,44 @@ class SnakeGame extends SurfaceView implements Runnable{
         mSnake.move();
 
         // Did the head of the snake eat the apple?
-        if(mSnake.checkDinner(mApple.getLocation())){
-            // This reminds me of Edge of Tomorrow.
-            // One day the apple will be ready!
-            mApple.spawn();
+        // Check if GoodApple was eaten
+        if(mSnake.checkDinner(this.mGoodApple.location)){
+            // After eating an apple, randomly spawn a GoodApple or BadApple
+            // If: Spawns GoodApple hides BadApple; Else: vice versa
+            if (random.nextInt(2) + 1 > 1) {
+                this.mGoodApple.location.x = random.nextInt(this.mGoodApple.mSpawnRange.x - 1) + 1;
+                this.mGoodApple.location.y = random.nextInt(this.mGoodApple.mSpawnRange.y - 1) + 1;
+                this.mBadApple.location.x = -10;
+                this.mBadApple.location.y = 0;
+            } else {
+                this.mBadApple.location.x = random.nextInt(this.mBadApple.mSpawnRange.x - 1) + 1;
+                this.mBadApple.location.y = random.nextInt(this.mBadApple.mSpawnRange.y - 1) + 1;
+                this.mGoodApple.location.x = -10;
+                this.mGoodApple.location.y = 0;
+            }
+            // Add to 2 mScore for GoodApple
+            mScore = mScore + 2;
 
-            // Add to  mScore
+            // Play a sound
+            mSP.play(mEat_ID, 1, 1, 0, 0, 1);
+        }
+
+        // Check if bad apple was eaten
+        if(mSnake.checkDinner(this.mBadApple.location)){
+            // After eating an apple, randomly spawn a GoodApple or BadApple
+            // If: Spawns GoodApple hides BadApple; Else: vice versa
+            if (random.nextInt(2) + 1 > 1) {
+                this.mGoodApple.location.x = random.nextInt(this.mGoodApple.mSpawnRange.x - 1) + 1;
+                this.mGoodApple.location.y = random.nextInt(this.mGoodApple.mSpawnRange.y - 1) + 1;
+                this.mBadApple.location.x = -10;
+                this.mBadApple.location.y = 0;
+            } else {
+                this.mBadApple.location.x = random.nextInt(this.mBadApple.mSpawnRange.x - 1) + 1;
+                this.mBadApple.location.y = random.nextInt(this.mBadApple.mSpawnRange.y - 1) + 1;
+                this.mGoodApple.location.x = -10;
+                this.mGoodApple.location.y = 0;
+            }
+            // Add to 1 mScore for BadApple
             mScore = mScore + 1;
 
             // Play a sound
@@ -211,8 +283,10 @@ class SnakeGame extends SurfaceView implements Runnable{
             mCanvas.drawText("" + mScore, 20, 120, mPaint);
 
             // Draw the apple and the snake
-            mApple.draw(mCanvas, mPaint);
+            this.mGoodApple.draw(mCanvas, mPaint);
+            this.mBadApple.draw(mCanvas, mPaint);
             mSnake.draw(mCanvas, mPaint);
+
 
             // Draw some text while paused
             if(mPaused){

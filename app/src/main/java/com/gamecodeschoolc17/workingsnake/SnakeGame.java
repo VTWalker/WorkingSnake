@@ -145,12 +145,12 @@ class SnakeGame extends SurfaceView implements Runnable{
 
         // Get the apple ready for dinner
         if (random.nextInt(2) + 1 > 1) {
-            this.mGoodApple.location.x = random.nextInt(this.mGoodApple.mSpawnRange.x) + 1;
+            this.mGoodApple.location.x = random.nextInt(this.mGoodApple.mSpawnRange.x - 1) + 1;
             this.mGoodApple.location.y = random.nextInt(this.mGoodApple.mSpawnRange.y - 1) + 1;
             this.mBadApple.location.x = -10;
             this.mBadApple.location.y = 0;
         } else {
-            this.mBadApple.location.x = random.nextInt(this.mBadApple.mSpawnRange.x) + 1;
+            this.mBadApple.location.x = random.nextInt(this.mBadApple.mSpawnRange.x - 1) + 1;
             this.mBadApple.location.y = random.nextInt(this.mBadApple.mSpawnRange.y - 1) + 1;
             this.mGoodApple.location.x = -10;
             this.mGoodApple.location.y = 0;
@@ -212,38 +212,48 @@ class SnakeGame extends SurfaceView implements Runnable{
 
         // Did the head of the snake eat the apple?
         // Check if GoodApple was eaten
-//        if(mSnake.checkDinner(this.mGoodApple.location)){
-//            // After eating an apple, randomly spawn a GoodApple or BadApple
-//            if (random.nextInt(2) + 1 > 1) {
-//                this.mGoodApple.location.x = random.nextInt(this.mGoodApple.mSpawnRange.x) + 1;
-//                this.mGoodApple.location.y = random.nextInt(this.mGoodApple.mSpawnRange.y - 1) + 1;
-//            } else {
-//                this.mBadApple.location.x = random.nextInt(this.mBadApple.mSpawnRange.x) + 1;
-//                this.mBadApple.location.y = random.nextInt(this.mBadApple.mSpawnRange.y - 1) + 1;
-//            }
-//            // Add to 2 mScore for GoodApple
-//            mScore = mScore + 2;
-//
-//            // Play a sound
-//            mSP.play(mEat_ID, 1, 1, 0, 0, 1);
-//        }
+        if(mSnake.checkDinner(this.mGoodApple.location)){
+            // After eating an apple, randomly spawn a GoodApple or BadApple
+            // If: Spawns GoodApple hides BadApple; Else: vice versa
+            if (random.nextInt(2) + 1 > 1) {
+                this.mGoodApple.location.x = random.nextInt(this.mGoodApple.mSpawnRange.x - 1) + 1;
+                this.mGoodApple.location.y = random.nextInt(this.mGoodApple.mSpawnRange.y - 1) + 1;
+                this.mBadApple.location.x = -10;
+                this.mBadApple.location.y = 0;
+            } else {
+                this.mBadApple.location.x = random.nextInt(this.mBadApple.mSpawnRange.x - 1) + 1;
+                this.mBadApple.location.y = random.nextInt(this.mBadApple.mSpawnRange.y - 1) + 1;
+                this.mGoodApple.location.x = -10;
+                this.mGoodApple.location.y = 0;
+            }
+            // Add to 2 mScore for GoodApple
+            mScore = mScore + 2;
+
+            // Play a sound
+            mSP.play(mEat_ID, 1, 1, 0, 0, 1);
+        }
 
         // Check if bad apple was eaten
-//        if(mSnake.checkDinner(this.mBadApple.location)){
-//            // After eating an apple, randomly spawn a GoodApple or BadApple
-//            if (random.nextInt(2) + 1 > 1) {
-//                this.mGoodApple.location.x = random.nextInt(this.mGoodApple.mSpawnRange.x) + 1;
-//                this.mGoodApple.location.y = random.nextInt(this.mGoodApple.mSpawnRange.y - 1) + 1;
-//            } else {
-//                this.mBadApple.location.x = random.nextInt(this.mBadApple.mSpawnRange.x) + 1;
-//                this.mBadApple.location.y = random.nextInt(this.mBadApple.mSpawnRange.y - 1) + 1;
-//            }
-//            // Add to 1 mScore for BadApple
-//            mScore = mScore + 1;
-//
-//            // Play a sound
-//            mSP.play(mEat_ID, 1, 1, 0, 0, 1);
-//        }
+        if(mSnake.checkDinner(this.mBadApple.location)){
+            // After eating an apple, randomly spawn a GoodApple or BadApple
+            // If: Spawns GoodApple hides BadApple; Else: vice versa
+            if (random.nextInt(2) + 1 > 1) {
+                this.mGoodApple.location.x = random.nextInt(this.mGoodApple.mSpawnRange.x - 1) + 1;
+                this.mGoodApple.location.y = random.nextInt(this.mGoodApple.mSpawnRange.y - 1) + 1;
+                this.mBadApple.location.x = -10;
+                this.mBadApple.location.y = 0;
+            } else {
+                this.mBadApple.location.x = random.nextInt(this.mBadApple.mSpawnRange.x - 1) + 1;
+                this.mBadApple.location.y = random.nextInt(this.mBadApple.mSpawnRange.y - 1) + 1;
+                this.mGoodApple.location.x = -10;
+                this.mGoodApple.location.y = 0;
+            }
+            // Add to 1 mScore for BadApple
+            mScore = mScore + 1;
+
+            // Play a sound
+            mSP.play(mEat_ID, 1, 1, 0, 0, 1);
+        }
 
         // Did the snake die?
         if (mSnake.detectDeath()) {

@@ -11,17 +11,13 @@ import java.util.Random;
 
 public class GoodAppleBuilder implements AppleBuilder {
     private NewApple Apple;
-    public Bitmap mBitmapAppleGood;
-    public Point locationGood;
-    public Point mSpawnRangeGood;
-    public int mSizeGood;
 
     // GoodAppleBuilder constructor
     public GoodAppleBuilder(Bitmap mBitmapApple, Point location, Point mSpawnRange, int mSize){
-        mBitmapAppleGood = mBitmapApple;    // Bitmap
-        locationGood = location;            // Point
-        mSpawnRangeGood = mSpawnRange;      // Point
-        mSizeGood = mSize;                  // Int
+        Apple.location = location;
+        Apple.mBitmapApple = mBitmapApple;
+        Apple.mSpawnRange = mSpawnRange;
+        Apple.mSize = mSize;
     };
 
     @Override

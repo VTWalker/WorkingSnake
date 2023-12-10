@@ -3,6 +3,8 @@ package com.gamecodeschoolc17.workingsnake;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -35,6 +37,9 @@ class SnakeGame extends SurfaceView implements Runnable{
     private final int NUM_BLOCKS_WIDE = 40;
     private int mNumBlocksHigh;
 
+    // Declare variable blockSize in main class
+    private int blockSize;
+
     // How many points does the player have
     private int mScore;
 
@@ -46,7 +51,13 @@ class SnakeGame extends SurfaceView implements Runnable{
     // A snake ssss
     private Snake mSnake;
     // And an apple
-    private Apple mApple;
+    private NewApple mApple;
+    private GoodAppleBuilder mGoodAppleBuilder;
+
+//    private BadAppleBuilder mBadAppleBuilder;
+
+
+    private Bitmap mBitmapApple;
 
 
     // This is the constructor method that gets called
@@ -55,7 +66,7 @@ class SnakeGame extends SurfaceView implements Runnable{
         super(context);
 
         // Work out how many pixels each block is
-        int blockSize = size.x / NUM_BLOCKS_WIDE;
+        blockSize = size.x / NUM_BLOCKS_WIDE;
         // How many blocks of the same size will fit into the height
         mNumBlocksHigh = size.y / blockSize;
 
@@ -93,10 +104,17 @@ class SnakeGame extends SurfaceView implements Runnable{
         mPaint = new Paint();
 
         // Call the constructors of our two game objects
-        mApple = new Apple(context,
-                new Point(NUM_BLOCKS_WIDE,
-                        mNumBlocksHigh),
-                blockSize);
+
+//        mApple = new Apple.AppleBuilder()
+//                .spawn(new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), false)
+//                .setSize(blockSize)
+//                .setBitmap(getContext(), R.drawable.apple)
+//                .build();
+        mBitmapApple = BitmapFactory.decodeResource(context.getResources(), R.drawable.apple);
+        mBitmapApple = Bitmap.createScaledBitmap(mBitmapApple, blockSize, blockSize, false);
+        mGoodAppleBuilder = new GoodAppleBuilder(mBitmapApple, new Point (-10, 0) , new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), blockSize);
+        mApple = mGoodAppleBuilder.returnApple();
+
 
         mSnake = new Snake(context,
                 new Point(NUM_BLOCKS_WIDE,
@@ -113,7 +131,11 @@ class SnakeGame extends SurfaceView implements Runnable{
         mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
 
         // Get the apple ready for dinner
-        mApple.spawn();
+//        mApple = new Apple.AppleBuilder()
+//                .spawn(new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), false)
+//                .setSize(blockSize)
+//                .setBitmap(getContext(), R.drawable.apple)
+//                .build();
 
         // Reset the mScore
         mScore = 0;
@@ -171,10 +193,14 @@ class SnakeGame extends SurfaceView implements Runnable{
         mSnake.move();
 
         // Did the head of the snake eat the apple?
-        if(mSnake.checkDinner(mApple.getLocation())){
-            // This reminds me of Edge of Tomorrow.
-            // One day the apple will be ready!
-            mApple.spawn();
+        if(mSnake.checkDinner(mApple.location)){
+//            // This reminds me of Edge of Tomorrow.
+//            // One day the apple will be ready!
+//            mApple = new Apple.AppleBuilder()
+//                    .spawn(new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), false)
+//                    .setSize(blockSize)
+//                    .setBitmap(getContext(), R.drawable.apple)
+//                    .build();
 
             // Add to  mScore
             mScore = mScore + 1;
@@ -213,6 +239,13 @@ class SnakeGame extends SurfaceView implements Runnable{
             // Draw the apple and the snake
             mApple.draw(mCanvas, mPaint);
             mSnake.draw(mCanvas, mPaint);
+
+//            mApple = new Apple.AppleBuilder()
+//                    .spawn(new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), false)
+//                    .setSize(blockSize)
+//                    .setBitmap(getContext(), R.drawable.apple)
+//                    .build();
+
 
             // Draw some text while paused
             if(mPaused){

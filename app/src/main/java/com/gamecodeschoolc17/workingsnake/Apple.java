@@ -8,56 +8,61 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import java.util.Random;
 
-class Apple {
+public interface Apple {
+    public Bitmap mBitmapApple;
+    public Point drawLocation = new Point();
 
-    // The location of the apple on the grid
-    // Not in pixels
-    private Point location = new Point();
 
-    // The range of values we can choose from
-    // to spawn an apple
-    private Point mSpawnRange;
-    private int mSize;
-
-    // An image to represent the apple
-    private Bitmap mBitmapApple;
-
-    /// Set up the apple in the constructor
-    Apple(Context context, Point sr, int s){
-
-        // Make a note of the passed in spawn range
-        mSpawnRange = sr;
-        // Make a note of the size of an apple
-        mSize = s;
-        // Hide the apple off-screen until the game starts
-        location.x = -10;
-
-        // Load the image to the bitmap
-        mBitmapApple = BitmapFactory.decodeResource(context.getResources(), R.drawable.apple);
-
-        // Resize the bitmap
-        mBitmapApple = Bitmap.createScaledBitmap(mBitmapApple, s, s, false);
+    // Private constructor to enforce the use of the builder
+    public Apple(Point spawnRange, int size, Bitmap bitmapApple) {
+        mBitmapApple = bitmapApple;
+        mBitmapApple = Bitmap.createScaledBitmap(mBitmapApple, size, size, false);
     }
 
     // This is called every time an apple is eaten
-    void spawn(){
-        // Choose two random values and place the apple
-        Random random = new Random();
-        location.x = random.nextInt(mSpawnRange.x) + 1;
-        location.y = random.nextInt(mSpawnRange.y - 1) + 1;
-    }
-
-    // Let SnakeGame know where the apple is
-    // SnakeGame can share this with the snake
-    Point getLocation(){
-        return location;
-    }
-
     // Draw the apple
-    void draw(Canvas canvas, Paint paint){
-        canvas.drawBitmap(mBitmapApple,
-                location.x * mSize, location.y * mSize, paint);
-
+    void draw(Canvas canvas, Paint paint) {
+        canvas.drawBitmap(mBitmapApple, drawLocation.x * mBitmapApple.getWidth(), drawLocation.y * mBitmapApple.getHeight(), paint);
     }
 
+    // Builder class for Apple
+    public static class AppleBuilder implements Apple{
+        private Point mSpawnRange;
+        private int mSize;
+        private Point location = new Point();
+        private Bitmap mBitmapApple;
+
+
+        // Let SnakeGame know where the apple is
+        // SnakeGame can share this with the snake
+        Point getLocation() {
+            return location;
+        }
+
+        public AppleBuilder spawn(Point spawnRange, boolean hide) {
+            if (hide == true) {
+                location.x = -10; // Hide the apple off-screen until the game starts
+            } else {
+                mSpawnRange = spawnRange;
+                Random random = new Random();
+                location.x = random.nextInt(mSpawnRange.x) + 1;
+                location.y = random.nextInt(mSpawnRange.y - 1) + 1;
+            }
+            return this;
+        }
+
+        public AppleBuilder setSize(int size) {
+            mSize = size;
+            return this;
+        }
+
+        public AppleBuilder setBitmap(Context context, int resourceId) {
+            mBitmapApple = BitmapFactory.decodeResource(context.getResources(), resourceId);
+            return this;
+        }
+
+        public Apple build() {
+            return new Apple(mSpawnRange, mSize, mBitmapApple);
+        }
+    }
 }

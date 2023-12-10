@@ -9,11 +9,11 @@ import android.graphics.Point;
 
 import java.util.Random;
 
-public class GoodAppleBuilder implements AppleBuilder {
+public class BadAppleBuilder implements AppleBuilder {
     private NewApple Apple;
 
-    // constructor GoodAppleBuilder
-    public GoodAppleBuilder(Bitmap mBitmapApple, Point location, Point mSpawnRange, int mSize){
+    // constructor for BadAppleBuilder
+    public BadAppleBuilder(Bitmap mBitmapApple, Point location, Point mSpawnRange, int mSize){
         this.Apple = new NewApple();
         this.Apple.location = location;
         this.Apple.mBitmapApple = mBitmapApple;

@@ -112,7 +112,7 @@ class SnakeGame extends SurfaceView implements Runnable{
 //                .build();
         mBitmapApple = BitmapFactory.decodeResource(context.getResources(), R.drawable.apple);
         mBitmapApple = Bitmap.createScaledBitmap(mBitmapApple, blockSize, blockSize, false);
-        mGoodAppleBuilder = new GoodAppleBuilder(mBitmapApple, new Point (-10, 0) , new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), blockSize);
+        mGoodAppleBuilder = new GoodAppleBuilder(mBitmapApple, new Point (30, 0) , new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), blockSize);
         mApple = mGoodAppleBuilder.returnApple();
 
 
@@ -237,7 +237,7 @@ class SnakeGame extends SurfaceView implements Runnable{
             mCanvas.drawText("" + mScore, 20, 120, mPaint);
 
             // Draw the apple and the snake
-//            mApple.draw(mCanvas, mPaint);
+            mApple.draw(mCanvas, mPaint);
             mSnake.draw(mCanvas, mPaint);
 
 //            mApple = new Apple.AppleBuilder()

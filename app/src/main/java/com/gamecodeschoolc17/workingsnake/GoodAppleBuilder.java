@@ -25,12 +25,12 @@ public class GoodAppleBuilder implements AppleBuilder {
     public Point getLocation() {
         return this.Apple.location;
     }
-    @Override
-    public void draw(Canvas canvas, Paint paint) {
-        canvas.drawBitmap(this.Apple.mBitmapApple,
-                this.Apple.location.x * this.Apple.mBitmapApple.getWidth(),
-                this.Apple.location.y * this.Apple.mBitmapApple.getHeight(), paint);
-    }
+//    @Override
+//    public void draw(Canvas canvas, Paint paint) {
+//        canvas.drawBitmap(this.Apple.mBitmapApple,
+//                this.Apple.location.x * this.Apple.mBitmapApple.getWidth(),
+//                this.Apple.location.y * this.Apple.mBitmapApple.getHeight(), paint);
+//    }
 
     @Override
     public void spawn(Point spawnRange, boolean hide) {

@@ -10,7 +10,7 @@ public interface AppleBuilder {
     Point getLocation();
     public void spawn(Point spawnRange, boolean hide);
     public void setSize(int size);
-    public void draw(Canvas canvas, Paint paint);
+//    public void draw(Canvas canvas, Paint paint);
     public void setBitmap(Context context, int resourceId);
 //    public void build();
 };

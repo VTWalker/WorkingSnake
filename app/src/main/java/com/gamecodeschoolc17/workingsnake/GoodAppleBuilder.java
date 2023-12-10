@@ -12,48 +12,50 @@ import java.util.Random;
 public class GoodAppleBuilder implements AppleBuilder {
     private NewApple Apple;
 
-    // GoodAppleBuilder constructor
+    // constructor GoodAppleBuilder
     public GoodAppleBuilder(Bitmap mBitmapApple, Point location, Point mSpawnRange, int mSize){
-        Apple.location = location;
-        Apple.mBitmapApple = mBitmapApple;
-        Apple.mSpawnRange = mSpawnRange;
-        Apple.mSize = mSize;
+        this.Apple = new NewApple();
+        this.Apple.location = location;
+        this.Apple.mBitmapApple = mBitmapApple;
+        this.Apple.mSpawnRange = mSpawnRange;
+        this.Apple.mSize = mSize;
     };
 
     @Override
     public Point getLocation() {
-        return Apple.location;
+        return this.Apple.location;
     }
-    void draw(Canvas canvas, Paint paint) {
-        canvas.drawBitmap(Apple.mBitmapApple,
-                Apple.location.x * Apple.mBitmapApple.getWidth(),
-                Apple.location.y * Apple.mBitmapApple.getHeight(), paint);
+    @Override
+    public void draw(Canvas canvas, Paint paint) {
+        canvas.drawBitmap(this.Apple.mBitmapApple,
+                this.Apple.location.x * this.Apple.mBitmapApple.getWidth(),
+                this.Apple.location.y * this.Apple.mBitmapApple.getHeight(), paint);
     }
 
     @Override
     public void spawn(Point spawnRange, boolean hide) {
         if (hide == true) {
-            Apple.location.x = -10; // Hide the apple off-screen until the game starts
+            this.Apple.location.x = -10; // Hide the apple off-screen until the game starts
         } else {
-            Apple.mSpawnRange = spawnRange;
+            this.Apple.mSpawnRange = spawnRange;
             Random random = new Random();
-            Apple.location.x = random.nextInt(Apple.mSpawnRange.x) + 1;
-            Apple.location.y = random.nextInt(Apple.mSpawnRange.y - 1) + 1;
+            this.Apple.location.x = random.nextInt(this.Apple.mSpawnRange.x) + 1;
+            this.Apple.location.y = random.nextInt(this.Apple.mSpawnRange.y - 1) + 1;
         }
     }
 
     @Override
     public void setSize(int size) {
-        Apple.mSize = size;
+        this.Apple.mSize = size;
     }
 
     @Override
     public void setBitmap(Context context, int resourceId) {
-        Apple.mBitmapApple = BitmapFactory.decodeResource(context.getResources(), resourceId);
+        this.Apple.mBitmapApple = BitmapFactory.decodeResource(context.getResources(), resourceId);
     }
 
     public NewApple returnApple() {
-        return Apple;
+        return this.Apple;
     }
 
 //    @Override
